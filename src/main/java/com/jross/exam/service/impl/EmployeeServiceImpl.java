@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Employee Service
@@ -26,6 +28,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Value("${app.file.employee.list}")
     private String sourceFile;
 
+    /**
+     * Find all Employee
+     * @return
+     */
     @Override
     public List<Employee> findAll() {
         JsonNode employeeListJson = JsonFetcherUtil.fileToJson(sourceFile);
@@ -42,5 +48,57 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         return employeeList;
+    }
+
+    /**
+     * Find all employee sort by field name
+     * @param sortByField
+     * @return
+     */
+    @Override
+    public List<Employee> findAll(String sortByField) {
+        List<Employee> employeeList = this.findAll();
+        if(sortByField != null && !sortByField.isEmpty()){
+            try{
+                Field field = Employee.class.getDeclaredField(sortByField);
+                if (!String.class.isAssignableFrom(field.getType())) {
+                    LOGGER.warn("Field is not a string!");
+                }
+
+                field.setAccessible(true);
+                return employeeList.stream()
+                        .sorted((first, second) -> {
+                            try {
+                                String a = (String) field.get(first);
+                                String b = (String) field.get(second);
+                                return a.compareTo(b);
+                            } catch (IllegalAccessException e) {
+                                LOGGER.warn("Error encountered in sorting by given field");
+                                return 0;
+                            }
+                        })
+                        .collect(Collectors.toList());
+
+            }catch (NoSuchFieldException e){
+                LOGGER.warn("Sort by field, not existing.");
+            }
+        }
+        return employeeList;
+    }
+
+    /**
+     * Find all employee by age
+     * @param min
+     * @param max
+     * @return
+     */
+    @Override
+    public List<Employee> findByAge(Integer min, Integer max) {
+        List<Employee> employeeList = this.findAll();
+
+        return employeeList
+                .stream()
+                .filter( e -> e.getAge() >= min && e.getAge() <= max)
+                .collect(Collectors.toList());
     }
 }

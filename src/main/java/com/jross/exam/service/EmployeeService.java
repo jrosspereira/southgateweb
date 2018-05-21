@@ -11,4 +11,8 @@ import java.util.List;
 public interface EmployeeService {
 
     List<Employee> findAll();
+
+    List<Employee> findAll(String sortByField);
+
+    List<Employee> findByAge(Integer min, Integer max);
 }
