@@ -53,7 +53,6 @@ public class Address implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(street, city, zipcode);
     }
 }
