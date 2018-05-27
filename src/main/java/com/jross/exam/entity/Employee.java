@@ -1,5 +1,7 @@
 package com.jross.exam.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -14,6 +16,7 @@ public class Employee implements Serializable {
 
     private String name;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
     private Date joindate;
 
     private Integer age;

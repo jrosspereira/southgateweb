@@ -3,8 +3,12 @@ package com.jross.exam.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,13 +28,21 @@ public class FileUtil {
      * @return
      */
     public static String readFile(String fileName){
-        //read file into stream, try-with-resources
-        try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-            return stream.collect(Collectors.joining());
-        } catch (IOException e) {
-            LOGGER.warn("Cannot read file {}", fileName);
+        Path path = null;
+        try{
+            path = Paths.get(FileUtil.class.getClassLoader()
+                    .getResource(fileName).toURI());
+        }catch (URISyntaxException e){
+            LOGGER.warn("Cannot find file {}", fileName);
         }
 
+        if(path != null){
+            try(Stream<String> lines = Files.lines(path)){
+                return lines.collect(Collectors.joining());
+            }catch (IOException e){
+                LOGGER.warn("Cannot read file {}", fileName);
+            }
+        }
         return null;
     }
 }

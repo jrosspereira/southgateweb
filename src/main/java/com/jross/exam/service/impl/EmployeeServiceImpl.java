@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import sun.rmi.runtime.Log;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -61,21 +62,28 @@ public class EmployeeServiceImpl implements EmployeeService {
         if(sortByField != null && !sortByField.isEmpty()){
             try{
                 Field field = Employee.class.getDeclaredField(sortByField);
-                if (!String.class.isAssignableFrom(field.getType())) {
-                    LOGGER.warn("Field is not a string!");
-                }
-
                 field.setAccessible(true);
                 return employeeList.stream()
                         .sorted((first, second) -> {
                             try {
-                                String a = (String) field.get(first);
-                                String b = (String) field.get(second);
-                                return a.compareTo(b);
+                                if (String.class.isAssignableFrom(field.getType())) {
+                                    String a = (String) field.get(first);
+                                    String b = (String) field.get(second);
+
+                                    return a.compareTo(b);
+                                }else if(Double.class.isAssignableFrom(field.getType())){
+                                    Double a = (Double) field.get(first);
+                                    Double b = (Double) field.get(second);
+
+                                    return a.compareTo(b);
+                                }else{
+                                    LOGGER.info("Field sort is not string or double, will use default sort");
+                                }
                             } catch (IllegalAccessException e) {
                                 LOGGER.warn("Error encountered in sorting by given field");
-                                return 0;
                             }
+
+                            return 0;
                         })
                         .collect(Collectors.toList());
 

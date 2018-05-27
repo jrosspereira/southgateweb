@@ -25,7 +25,7 @@ public class EmployeeController {
      * @param field
      * @return
      */
-    @RequestMapping(value = "/sort/${field}", method = RequestMethod.GET)
+    @RequestMapping(value = "/sort/{field}", method = RequestMethod.GET)
     @ResponseBody
     public List<Employee> employees(@PathVariable String field) {
         return employeeService.findAll(field);

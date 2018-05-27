@@ -9,17 +9,22 @@ import { EmployeeService } from "../employee.service";
 })
 export class EmployeesComponent implements OnInit {
 
+  sort: string;
   employees: Employee[];
 
   constructor(private employeeService : EmployeeService) { }
 
   ngOnInit() {
+    this.sort = "salary"; //default
     this.getEmployees();
   }
 
   getEmployees(): void {
-    this.employeeService.getEmployees("salary")
-      .subscribe(employees => this.employees = employees);
+    this.employeeService.getEmployees(this.sort)
+      .subscribe(employees => {
+        this.employees = employees;
+        console.log(employees)
+      });
   }
-  
+
 }
