@@ -1,0 +1,16 @@
+table {
+  width: 100%;
+}
+
+th.mat-sort-header-sorted {
+  color: black;
+}
+
+.btn-search{
+  position: absolute;
+  left: 5px;
+}
+
+.grid-search{
+  max-width: 700px;
+}

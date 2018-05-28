@@ -14,6 +14,7 @@ import sun.rmi.runtime.Log;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,9 +105,25 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<Employee> findByAge(Integer min, Integer max) {
         List<Employee> employeeList = this.findAll();
 
+        if(min != null && max != null){
+            employeeList = employeeList
+                    .stream()
+                    .filter( e -> e.getAge() >= min && e.getAge() <= max)
+                    .collect(Collectors.toList());
+        }else if(max != null){
+            employeeList = employeeList
+                    .stream()
+                    .filter( e -> e.getAge() <= max)
+                    .collect(Collectors.toList());
+        }else if(min != null){
+            employeeList = employeeList
+                    .stream()
+                    .filter( e -> e.getAge() >= min)
+                    .collect(Collectors.toList());
+        }
         return employeeList
                 .stream()
-                .filter( e -> e.getAge() >= min && e.getAge() <= max)
+                .sorted(Comparator.comparing(Employee::getAge))
                 .collect(Collectors.toList());
     }
 }

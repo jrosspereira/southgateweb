@@ -39,7 +39,8 @@ public class EmployeeController {
      */
     @RequestMapping(value = "/findByAge", method = RequestMethod.GET)
     @ResponseBody
-    public List<Employee> findByAge(@RequestParam Integer min, @RequestParam Integer max) {
+    public List<Employee> findByAge(@RequestParam(required = false) Integer min,
+                                    @RequestParam(required = false) Integer max) {
         return employeeService.findByAge(min, max);
     }
 }

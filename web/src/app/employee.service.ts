@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Employee } from "./employee";
+import {isUndefined} from "util";
 
 @Injectable({
   providedIn: 'root'
@@ -22,12 +23,16 @@ export class EmployeeService {
 
   /** GET employees by age from the server */
   getEmployeesByAge (min: number, max: number): Observable<Employee[]> {
-    const url = this.employeeApiUrl + "/findByAge?min=" + min + "&max=" + max;
+    var url = this.employeeApiUrl + "/findByAge?"
+
+    if(min){
+      url += "&min=" + min;
+    }
+
+    if(max){
+      url += "&max=" + max;
+    }
 
     return this.http.get<Employee[]>(url);
-      /*.pipe(
-        tap(employees => console.log('fetched employees')),
-        catchError(console.log('fail fetching employees'))
-      );*/
   }
 }
